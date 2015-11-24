@@ -67,7 +67,7 @@ def processor(inputs):
 
 				tempNodes = tempNodes-1
 
-			outputFile.write("\n\n")
+			outputFile.write("<end>\n")
 			numNetworks = numNetworks-1
 
 if __name__ == '__main__':
