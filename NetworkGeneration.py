@@ -48,6 +48,7 @@ def processor(inputs):
 				row = randint(col+1,numNodes-1)
 				outMatrix[row][col] = 1
 			
+			outputFile.write(str(numNodes)+"\n")
 			for row in range(0,numNodes):
 				for col in range(0,numNodes):
 					outputFile.write(str(outMatrix[row][col]))
