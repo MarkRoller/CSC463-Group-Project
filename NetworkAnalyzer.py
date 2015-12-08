@@ -11,22 +11,22 @@ import sys
 
 def PowerControl(network,numNodes):
 	for col in range(0,numNodes-2):
-		for row in range(1,NumNodes-1):
+		for row in range(1,numNodes-1):
 			if network[row][col] == 1:
 				dummyVariable = 0
 
-				# GEORGE TODO:
+				# TODO:
 				# Add to dict
 				# Go through and compare power/noise
 				# Return yes/no
 
 def RegularControl(network,numNodes):
 	for col in range(0,numNodes-2):
-		for row in range(1,NumNodes-1):
+		for row in range(1,numNodes-1):
 			if network[row][col] == 1:
 				dummyVariable = 0
 
-				# CHRISTINA TODO:
+				# TODO:
 				# Add to dict
 				# Go through and compare power/noise
 				# Return yes/no
@@ -44,24 +44,25 @@ def Processor(inputs):
 			getNodes = 0
 			for line in inputFile:
 				if getNodes == 0:
-					numNodes = int(line)
+					numNodes = int(line.split("\n")[0])
 					inMatrix = [[0 for x in range(numNodes)] for x in range(numNodes)]
 					getNodes = 1
 					rowPosition = 0
 					continue
 
-				if line == "<end>\n":
+				if line.split("\n")[0] == "<end>":
 					getNodes = 0
 					powerResult = PowerControl(inMatrix,numNodes)
 					regularResult = RegularControl(inMatrix,numNodes)
 
 					# TODO: ADD OUTPUT TO FILE
-
 					continue
 
 				colPosition = 0
-				for value in line.split(","):
-					inMatrix[rowPosition][colPosition] = value
+				for value in line.split("\n")[0].split(","):
+					inMatrix[rowPosition][colPosition] = int(value)
+					colPosition = colPosition+1
+				rowPosition = rowPosition+1
 
 if __name__ == '__main__':
     Processor(sys.argv[1:])
