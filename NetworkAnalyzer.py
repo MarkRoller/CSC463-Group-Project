@@ -161,8 +161,21 @@ def RegularControl(network,numNodes):
 				if(path[x] not in noise):
 					noise.append(path[x])
 
+	#Calculate noise for each receiving node
+	for row in transfers:
+		noiseDist = []
+		for node in noise:
+			if(node==row[1]):
+				continue
+			else:
+				noiseDist.append(1/float(matrix[node][row[1]]))
+		totalNoise = 1/sum(noiseDist)
+		if(totalNoise<1):
+			#print "Too loud"
+			return -1
 
-	return "End of REGULAR CONTROL"
+	#print "All transmissions sucessful"
+	return 1
 
 
 def Processor(inputs):
