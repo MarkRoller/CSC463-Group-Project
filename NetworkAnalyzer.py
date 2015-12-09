@@ -8,6 +8,44 @@
 # #
 
 import sys
+import numpy as np
+import itertools
+from scipy.sparse import csr_matrix
+from scipy.sparse.csgraph import minimum_spanning_tree
+
+def GeneratePaths(distances,minPower,start,end, numNodes):
+	#Just going to create a matrix of all possible paths
+	matrix = [x for x in range(numNodes)]
+	#print matrix
+	allPossiblePaths = []
+	allPossiblePaths.append(itertools.permutations(matrix))
+	allPossiblePaths = list(itertools.permutations(matrix, len(matrix)))
+	shortestDistance = 9999999999999
+	shortestPath = []
+	#print allPossiblePaths
+
+	for row in allPossiblePaths:
+		#row = np.array(row)
+		startPos = row.index(start)
+		endPos = row.index(end)
+		distance = 0
+		if(startPos>endPos):
+			temp = startPos
+			startPos=endPos
+			endPos=temp
+		for x in range (startPos,endPos):
+			if(distances[row[x]][row[x+1]]>minPower):
+				distance = 9999999999999
+				break
+
+			distance=distance+distances[row[x]][row[x+1]]
+
+
+		if(distance<shortestDistance):
+			shortestDistance=distance
+			shortestPath = row[startPos:endPos+1]
+
+	return shortestPath
 
 def PowerControl(network,numNodes):
 
@@ -97,15 +135,50 @@ def PowerControl(network,numNodes):
 				# Return yes/no
 
 def RegularControl(network,numNodes):
-	for col in range(0,numNodes-2):
-		for row in range(1,numNodes-1):
-			if network[row][col] == 1:
-				dummyVariable = 0
+	#Create complete graph
+	matrix = [[0 for x in range(numNodes)] for x in range(numNodes)]
+	for col in range(0,numNodes):
+		for row in range(0,col+1):
+			matrix[row][col]=network[row][col]
+	minTree = minimum_spanning_tree(matrix).toarray().astype(int)
 
-				# TODO:
-				# Add to dict
-				# Go through and compare power/noise
-				# Return yes/no
+
+	minPower = np.amax(minTree)
+
+	#start and destination array
+	transfers = []
+
+	for col in range(0,numNodes):
+		for row in range(col+1,numNodes):
+			#Finish distance matrix
+			matrix[row][col]=network[col][row]
+
+			#Figure out the destinations, and sources of transmissions
+			if(network[row][col] != 0):
+				if(network[row][col] == 1):
+					transfers.append([row, col])
+				else:
+					transfers.append([col, row])
+
+
+	#Find path, but using the power calulated in minTree, but normal routing
+	noise = []
+
+	#if we can just send directly
+	for row in transfers:
+		if(matrix[row[0]][row[1]]<=minPower):
+			if(row[1] not in noise):
+				noise.append(row[1])
+			#print 'test'
+		else:
+			path = GeneratePaths(matrix, minPower, row[0], row[1], numNodes)
+			for x in range (1, len(path)):
+				if(path[x] not in noise):
+					noise.append(path[x])
+
+
+	return "End of REGULAR CONTROL"
+
 
 def Processor(inputs):
 	try:
