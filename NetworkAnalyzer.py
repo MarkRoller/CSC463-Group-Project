@@ -129,8 +129,6 @@ def RegularControl(network,numNodes):
 
 
 	minPower = np.amax(minTree)
-	print 'minPower is '
-	print minPower
 
 	#start and destination array
 	transfers = []
@@ -154,16 +152,14 @@ def RegularControl(network,numNodes):
 	#if we can just send directly
 	for row in transfers:
 		if(matrix[row[0]][row[1]]<=minPower):
-			noise.append(row[1])
-			print 'test'
+			if(row[1] not in noise):
+				noise.append(row[1])
+			#print 'test'
 		else:
 			path = GeneratePaths(matrix, minPower, row[0], row[1], numNodes)
 			for x in range (1, len(path)):
-				noise.append(path[x])
-
-
-	for row in noise:
-		print row
+				if(path[x] not in noise):
+					noise.append(path[x])
 
 
 	return "End of REGULAR CONTROL"
