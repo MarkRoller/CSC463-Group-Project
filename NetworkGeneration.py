@@ -3,11 +3,11 @@
 #
 # Usage: python NetworkGeneration.py (Max Nodes) (Max Distance Between Nodes) (Number Of Networks To Create) (Name Of Output File)
 #
-# @version 1 - Modified December 8 2015 11:00 AM
+# @version 1 - Modified December 8 2015 1:00 PM
 # @python-version 2.7
 # #
 
-import sys
+import sys, math
 from random import randint
 
 def processor(inputs):
@@ -30,6 +30,10 @@ def processor(inputs):
 			conChance = randint(minChance,maxChance)
 			numNodes = randint(minNodes,maxNodes)
 			outMatrix = [[0 for x in range(numNodes)] for x in range(numNodes)]
+			angleList = [0 for x in range(numNodes)]
+
+			for node in range(0,numNodes):
+				angleList[node] = randint(-180,180)
 
 			numConnections = 0
 			for row in range(0,numNodes):
@@ -37,10 +41,35 @@ def processor(inputs):
 					if row == col:
 						continue
 
-					outMatrix[row][col] = randint(minDist,maxDist)
+					if row == 0:
+						outMatrix[row][col] = randint(minDist,maxDist)
+					else:
+						b = outMatrix[0][row]
+						c = outMatrix[0][col]
+						B = angleList[row]
+						C = angleList[col]
+
+						if B >= 0:
+							if B < C:
+								A = angleList[col] - angleList[row]
+							else: 
+								A = angleList[row] - angleList[col]		
+						else:
+							if B > C:
+								A = ((-1)*angleList[col]) + angleList[row]
+							else:
+								A = ((-1)*angleList[row]) + angleList[col]
+
+						outMatrix[row][col] = int(math.sqrt(pow(b,2)+pow(c,2)-(2*b*c*(math.cos(A)))))
+
+						if outMatrix[row][col] < 1:
+							outMatrix[row][col] = 1
 
 					if randint(0,100) < conChance:
-						outMatrix[col][row] = 1
+						if randint(0,100) < 50:
+							outMatrix[col][row] = 1
+						else:
+							outMatrix[col][row] = -1
 						numConnections = numConnections+1
 
 			if numConnections == 0:
