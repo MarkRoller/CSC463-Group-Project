@@ -85,7 +85,10 @@ def RegularControl(network,numNodes):
 			else:
 				noiseDist.append(1/float(matrix[node][row[1]]))
 
-		totalNoise = 1/sum(noiseDist)
+		if sum(noiseDist) == 0:
+			totalNoise = 1
+		else:
+			totalNoise = 1/sum(noiseDist)
 
 		if totalNoise < 1:
 			return -1
