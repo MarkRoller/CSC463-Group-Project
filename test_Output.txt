@@ -1,0 +1,8 @@
+Number of Nodes - 4
+Average Distance - 2
+
+Power Control Result - Failed
+Regular Result - Passed
+
+--------------------
+

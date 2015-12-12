@@ -29,6 +29,8 @@ def processor(inputs):
 		while numNetworks > 0:
 			conChance = randint(minChance,maxChance)
 			numNodes = randint(minNodes,maxNodes)
+			averageDistance = 0
+			numberDistances = 0
 			outMatrix = [[0 for x in range(numNodes)] for x in range(numNodes)]
 			angleList = [0 for x in range(numNodes)]
 
@@ -43,6 +45,8 @@ def processor(inputs):
 
 					if row == 0:
 						outMatrix[row][col] = randint(minDist,maxDist)
+						averageDistance = averageDistance + outMatrix[row][col]
+						numberDistances = numberDistances + 1
 					else:
 						b = outMatrix[0][row]
 						c = outMatrix[0][col]
@@ -61,6 +65,8 @@ def processor(inputs):
 								A = ((-1)*angleList[row]) + angleList[col]
 
 						outMatrix[row][col] = int(math.sqrt(pow(b,2)+pow(c,2)-(2*b*c*(math.cos(A)))))
+						averageDistance = averageDistance + outMatrix[row][col]
+						numberDistances = numberDistances + 1
 
 						if outMatrix[row][col] < 1:
 							outMatrix[row][col] = 1
@@ -76,8 +82,10 @@ def processor(inputs):
 				col = randint(0,numNodes-2)
 				row = randint(col+1,numNodes-1)
 				outMatrix[row][col] = 1
+
+			averageDistance = int(averageDistance/numberDistances)
 			
-			outputFile.write(str(numNodes)+"\n")
+			outputFile.write(str(numNodes) + "," + str(averageDistance) + "\n")
 			for row in range(0,numNodes):
 				for col in range(0,numNodes):
 					outputFile.write(str(outMatrix[row][col]))
